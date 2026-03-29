@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIT4U Health CRM</title>
+    <title>Maahi Health CRM</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Highcharts for 3D Graphs (Updated CDN for better local file support) -->
+    <!-- Highcharts for 3D Graphs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.0/highcharts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.0/highcharts-3d.js"></script>
     <style>
@@ -20,26 +20,90 @@
             @page { margin: 1cm; size: A4 portrait; }
         }
         .print-only { display: none; }
+        
+        /* Glassmorphism for Login */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Background for Login - Updated attractive fitness background */
+        .login-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-emerald-200">
+<body class="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-red-200">
+
+    <!-- ================= LOGIN VIEW ================= -->
+    <div id="view-login" class="login-bg min-h-screen flex items-center justify-center p-4 z-50 fixed inset-0">
+        <div class="glass-card rounded-2xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-400"></div>
+            
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-3xl mx-auto mb-4 shadow-sm border border-red-200">
+                    M
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Maahi <span class="text-red-600">Wellness</span></h1>
+                <p class="text-slate-600 font-medium mt-2">Guide your clients to a healthier tomorrow.</p>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="absolute left-3 top-3 w-5 h-5 text-slate-400"></i>
+                        <input required type="email" id="auth-email" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white/70" placeholder="coach@maahi.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-3 top-3 w-5 h-5 text-slate-400"></i>
+                        <input required type="password" id="auth-password" class="w-full pl-10 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white/70" placeholder="••••••••">
+                    </div>
+                </div>
+                
+                <div id="auth-error" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium border border-red-100 flex items-start">
+                    <i data-lucide="alert-circle" class="w-4 h-4 mr-2 mt-0.5 shrink-0"></i>
+                    <span id="auth-error-msg">Error message</span>
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full p-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-md flex justify-center items-center mt-2">
+                    <span>Secure Login</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Navigation Bar -->
-    <nav class="bg-white border-b shadow-sm no-print sticky top-0 z-10">
+    <nav id="main-nav" class="bg-white border-b shadow-sm no-print sticky top-0 z-10 hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-lg sm:text-xl shrink-0">
-                        F
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-lg sm:text-xl shrink-0">
+                        M
                     </div>
-                    <span class="font-bold text-xl sm:text-2xl text-slate-800 tracking-tight truncate">FIT<span class="text-emerald-500">4U</span></span>
+                    <span class="font-bold text-xl sm:text-2xl text-slate-800 tracking-tight truncate">Maahi <span class="text-red-500 text-lg">Wellness</span></span>
                 </div>
-                <div class="flex items-center space-x-1 sm:space-x-4">
-                    <button onclick="navigate('dashboard')" id="nav-dashboard" class="flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-emerald-50 text-emerald-700">
+                <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto no-scrollbar">
+                    <button id="install-btn" class="hidden flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-bold transition-colors bg-gradient-to-r from-orange-400 to-red-500 text-white shadow-sm shrink-0">
+                        <i data-lucide="download" class="w-4 h-4 mr-1"></i> <span class="hidden sm:inline">Install App</span><span class="sm:hidden">Install</span>
+                    </button>
+                    <button onclick="navigate('dashboard')" id="nav-dashboard" class="flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-red-50 text-red-700 shrink-0">
                         <i data-lucide="users" class="w-4 h-4 mr-1 sm:mr-2 hidden sm:block"></i> <span class="hidden sm:inline">Dashboard</span><span class="sm:hidden">Dash</span>
                     </button>
-                    <button onclick="showForm()" id="nav-form" class="flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-slate-800 text-white hover:bg-slate-700">
+                    <button onclick="showForm()" id="nav-form" class="flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-slate-800 text-white hover:bg-slate-700 shrink-0">
                         <i data-lucide="user-plus" class="w-4 h-4 mr-1 sm:mr-2"></i> <span class="hidden sm:inline">New Entry</span><span class="sm:hidden">New</span>
+                    </button>
+                    <button onclick="logout()" class="flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-slate-500 hover:text-red-600 hover:bg-red-50 shrink-0" title="Logout">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
@@ -47,14 +111,39 @@
     </nav>
 
     <!-- Main Content Area -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main id="main-content" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 hidden">
         
         <!-- ================= DASHBOARD VIEW ================= -->
         <div id="view-dashboard" class="space-y-6 block">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900">Client Tracking Dashboard</h1>
-                    <p class="text-sm sm:text-base text-slate-500">Manage health records and follow-ups</p>
+                    <p class="text-sm sm:text-base text-slate-500">Manage health records and follow-ups securely.</p>
+                </div>
+            </div>
+
+            <!-- Firebase Permission Error Banner -->
+            <div id="firestore-error-banner" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm">
+                <div class="flex items-start">
+                    <i data-lucide="shield-alert" class="w-6 h-6 mr-3 text-red-600 shrink-0"></i>
+                    <div>
+                        <h3 class="font-bold text-red-800 text-sm sm:text-base">Database Permission Denied!</h3>
+                        <p class="text-xs sm:text-sm text-red-700 mt-1 leading-relaxed">
+                            It looks like your Firebase Firestore Security Rules are blocking access. 
+                            To fix this, go to your <b>Firebase Console</b> &rarr; <b>Firestore Database</b> &rarr; <b>Rules</b>, and replace the code with this:
+                        </p>
+                        <div class="mt-3 bg-white p-3 rounded border border-red-200 overflow-x-auto relative">
+                            <pre class="text-xs text-slate-800 font-mono">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}</pre>
+                            <button onclick="navigator.clipboard.writeText(`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if request.auth != null;\n    }\n  }\n}`)" class="absolute top-2 right-2 text-xs bg-slate-100 px-2 py-1 rounded text-slate-600 hover:bg-slate-200">Copy</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -70,7 +159,7 @@
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
                     <div class="p-2 sm:p-3 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
                     <div>
-                        <p class="text-xs sm:text-sm font-medium text-slate-500">Pending</p>
+                        <p class="text-xs sm:text-sm font-medium text-slate-500">Pending Follow-ups</p>
                         <p id="stat-pending" class="text-lg sm:text-2xl font-bold text-slate-900">0</p>
                     </div>
                 </div>
@@ -110,7 +199,7 @@
             <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-800 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-700">
                     <h2 id="form-title" class="text-lg sm:text-xl font-bold text-white flex items-center">
-                        <i data-lucide="activity" class="w-5 h-5 mr-2 text-emerald-400"></i>
+                        <i data-lucide="activity" class="w-5 h-5 mr-2 text-red-400"></i>
                         New Health Scan Entry
                     </h2>
                 </div>
@@ -124,24 +213,24 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                                <input required type="text" id="form-name" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" placeholder="Mr. / Ms. Name">
+                                <input required type="text" id="form-name" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" placeholder="Mr. / Ms. Name">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp Number</label>
-                                <input required type="tel" id="form-mobile" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" placeholder="10-digit number">
+                                <input required type="tel" id="form-mobile" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" placeholder="10-digit number">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Address</label>
-                                <input type="text" id="form-address" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" placeholder="City / Area">
+                                <input type="text" id="form-address" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" placeholder="City / Area">
                             </div>
                             <div class="grid grid-cols-2 gap-3 sm:gap-4 sm:col-span-2 md:col-span-1">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Age</label>
-                                    <input required type="number" id="form-age" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    <input required type="number" id="form-age" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Gender</label>
-                                    <select id="form-gender" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                    <select id="form-gender" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-white">
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
@@ -156,11 +245,11 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Height (cm)</label>
-                                <input required type="number" step="0.1" id="form-height" oninput="autoCalculateBMI()" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 text-sm">
+                                <input required type="number" step="0.1" id="form-height" oninput="autoCalculateBMI()" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-slate-50 text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Weight (kg)</label>
-                                <input required type="number" step="0.1" id="form-weight" oninput="autoCalculateBMI()" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 text-sm">
+                                <input required type="number" step="0.1" id="form-weight" oninput="autoCalculateBMI()" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none bg-slate-50 text-sm">
                             </div>
                             <div class="col-span-2 sm:col-span-1">
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">BMI (Auto)</label>
@@ -168,28 +257,28 @@
                             </div>
                             <div class="col-span-2 sm:col-span-3 md:col-span-1">
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Primary Goal</label>
-                                <input type="text" id="form-disease" value="Fat Loss" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="e.g. Fat Loss">
+                                <input type="text" id="form-disease" value="Fat Loss" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm" placeholder="e.g. Fat Loss">
                             </div>
                             
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Body Fat %</label>
-                                <input required type="number" step="0.1" id="form-bodyFat" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                                <input required type="number" step="0.1" id="form-bodyFat" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Visceral Fat</label>
-                                <input required type="number" step="0.1" id="form-visceralFat" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                                <input required type="number" step="0.1" id="form-visceralFat" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">SF. Muscles %</label>
-                                <input required type="number" step="0.1" id="form-muscle" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                                <input required type="number" step="0.1" id="form-muscle" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Body Age</label>
-                                <input required type="number" id="form-bodyAge" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                                <input required type="number" id="form-bodyAge" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm">
                             </div>
                             <div class="col-span-2 sm:col-span-1">
                                 <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Metabolism</label>
-                                <input required type="number" id="form-metabolism" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="Calories">
+                                <input required type="number" id="form-metabolism" class="w-full p-2 sm:p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-sm" placeholder="Calories">
                             </div>
                         </div>
                     </div>
@@ -198,7 +287,7 @@
                         <button type="button" onclick="navigate('dashboard')" class="w-full sm:w-auto px-5 py-2.5 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors text-center">
                             Cancel
                         </button>
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm flex items-center justify-center">
+                        <button type="submit" id="save-btn" class="w-full sm:w-auto px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center">
                             <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Save & Generate Report
                         </button>
                     </div>
@@ -228,22 +317,29 @@
 
             <!-- The Printable Report / Certificate -->
             <div class="print-container max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
-                <!-- Certificate Header -->
-                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-5 py-6 sm:px-8 sm:py-8 border-b-4 border-emerald-500">
+                <!-- Certificate Header (UPDATED FOR MAAHI) -->
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 px-5 py-6 sm:px-8 sm:py-8 border-b-4 border-red-500">
                     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 sm:gap-0 text-center sm:text-left">
                         <div>
-                            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
-                                <span class="text-emerald-500">FIT</span>4U
+                            <h1 class="text-3xl sm:text-4xl font-extrabold text-red-600 tracking-tight flex items-center justify-center sm:justify-start">
+                                <i data-lucide="activity" class="w-7 h-7 sm:w-8 sm:h-8 mr-2"></i> Maahi
                             </h1>
-                            <p class="text-emerald-700 font-medium text-xs sm:text-sm mt-1 tracking-wide">Bhargav Kansara <span class="hidden sm:inline text-slate-400">|</span><br class="sm:hidden" /> Managing Director</p>
+                            <p class="text-red-800 font-bold text-sm sm:text-base mt-1 tracking-wide">Nutrition & Wellness Centre</p>
+                            <p class="text-slate-600 font-medium text-xs mt-1">12, Shakti Nagar Society, Nr. V. K. Vadi, Mehsana-384001</p>
                         </div>
-                        <div class="text-center sm:text-right bg-white/60 p-2 sm:p-0 rounded sm:bg-transparent w-full sm:w-auto">
-                            <p class="text-xs sm:text-sm font-semibold text-slate-600">Report No: <span id="r-id" class="text-slate-900"></span></p>
-                            <p class="text-xs sm:text-sm font-semibold text-slate-600">Date: <span id="r-date" class="text-slate-900"></span></p>
+                        <div class="text-center sm:text-right bg-white/60 p-3 sm:p-0 rounded sm:bg-transparent w-full sm:w-auto">
+                            <p class="font-bold text-slate-800 text-sm sm:text-base">Mihir Kansara</p>
+                            <p class="text-slate-600 text-xs font-medium">Wellness Coach</p>
+                            <p class="text-slate-600 text-xs font-medium mb-2">+91 9898114972</p>
+                            
+                            <div class="border-t border-slate-300 pt-2 mt-2">
+                                <p class="text-xs sm:text-sm font-semibold text-slate-700">Report No: <span id="r-id" class="text-slate-900"></span></p>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-700">Date: <span id="r-date" class="text-slate-900"></span></p>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-4 sm:mt-6 text-center">
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-widest bg-emerald-100/50 inline-block px-3 py-1 rounded-full">Digital Health Scan Report</p>
+                        <p class="text-xs sm:text-sm font-bold text-red-600 uppercase tracking-widest bg-white inline-block px-4 py-1.5 rounded-full shadow-sm border border-red-100">Digital Health Scan Report</p>
                     </div>
                 </div>
 
@@ -279,7 +375,7 @@
                     <!-- Metrics Table -->
                     <div class="mb-6 sm:mb-8">
                         <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-3 sm:mb-4 flex items-center">
-                            <i data-lucide="activity" class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-500"></i> Parameter Details
+                            <i data-lucide="activity" class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-red-500"></i> Parameter Details
                         </h3>
                         <div class="overflow-x-auto rounded-xl border border-slate-200">
                             <table class="w-full text-left min-w-[450px]">
@@ -287,44 +383,44 @@
                                     <tr class="bg-slate-50 text-slate-600 text-xs sm:text-sm">
                                         <th class="p-2 sm:p-3 font-semibold border-b border-slate-200">Details</th>
                                         <th class="p-2 sm:p-3 font-semibold border-b border-slate-200">Normal Range</th>
-                                        <th class="p-2 sm:p-3 font-semibold border-b border-slate-200 bg-emerald-50/50 text-emerald-800 text-right">Actual Result</th>
+                                        <th class="p-2 sm:p-3 font-semibold border-b border-slate-200 bg-red-50/50 text-red-800 text-right">Actual Result</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">1. Weight (Kg)</td>
                                         <td id="r-normal-weight" class="p-2 sm:p-3 text-slate-600"></td>
-                                        <td id="r-weight" class="p-2 sm:p-3 text-right font-bold bg-emerald-50/20"></td>
+                                        <td id="r-weight" class="p-2 sm:p-3 text-right font-bold bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">2. Body Fat %</td>
                                         <td class="p-2 sm:p-3 text-slate-600">M: 15-19 | F: 20-25</td>
-                                        <td id="r-bodyFat" class="p-2 sm:p-3 text-right font-bold bg-emerald-50/20"></td>
+                                        <td id="r-bodyFat" class="p-2 sm:p-3 text-right font-bold bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">3. Visceral Fat %</td>
                                         <td class="p-2 sm:p-3 text-slate-600">0 - 5</td>
-                                        <td id="r-visceralFat" class="p-2 sm:p-3 text-right font-bold bg-emerald-50/20"></td>
+                                        <td id="r-visceralFat" class="p-2 sm:p-3 text-right font-bold bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">4. SF. Muscles %</td>
                                         <td class="p-2 sm:p-3 text-slate-600">-</td>
-                                        <td id="r-muscle" class="p-2 sm:p-3 text-right font-bold text-slate-800 bg-emerald-50/20"></td>
+                                        <td id="r-muscle" class="p-2 sm:p-3 text-right font-bold text-slate-800 bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">5. Body Age</td>
                                         <td id="r-real-age" class="p-2 sm:p-3 text-slate-600"></td>
-                                        <td id="r-bodyAge" class="p-2 sm:p-3 text-right font-bold bg-emerald-50/20"></td>
+                                        <td id="r-bodyAge" class="p-2 sm:p-3 text-right font-bold bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">6. Metabolism (RM)</td>
                                         <td class="p-2 sm:p-3 text-slate-600">Calories</td>
-                                        <td id="r-metabolism" class="p-2 sm:p-3 text-right font-bold text-slate-800 bg-emerald-50/20"></td>
+                                        <td id="r-metabolism" class="p-2 sm:p-3 text-right font-bold text-slate-800 bg-red-50/20"></td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 sm:p-3 font-medium text-slate-800">7. BMI</td>
                                         <td class="p-2 sm:p-3 text-slate-600">20 - 22</td>
-                                        <td id="r-bmi" class="p-2 sm:p-3 text-right font-bold bg-emerald-50/20"></td>
+                                        <td id="r-bmi" class="p-2 sm:p-3 text-right font-bold bg-red-50/20"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -352,19 +448,19 @@
                         </div>
                     </div>
 
-                    <!-- Footer & Signature -->
+                    <!-- Footer & Signature (UPDATED FOR MAAHI) -->
                     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end pt-6 sm:pt-8 border-t border-slate-200 mt-auto gap-6 sm:gap-0 text-center sm:text-left">
-                        <div class="bg-emerald-50 p-3 sm:p-4 rounded-lg border border-emerald-100 w-full sm:w-auto text-center">
-                            <p class="text-emerald-800 font-bold text-base sm:text-lg mb-1">શું તમે ફીટ રહેવા માંગો છો?</p>
-                            <p class="text-emerald-600 text-xs sm:text-sm">વજન ઘટાડો | બોડી ક્લીન | મસલ્સ ગેઇન</p>
+                        <div class="bg-red-50 p-3 sm:p-4 rounded-lg border border-red-100 w-full sm:w-auto text-center">
+                            <p class="text-red-800 font-bold text-base sm:text-lg mb-1">શું તમે ફીટ રહેવા માંગો છો?</p>
+                            <p class="text-red-600 text-xs sm:text-sm">વજન ઘટાડો | બોડી ક્લીન | મસલ્સ ગેઇન</p>
                         </div>
                         <div class="text-center sm:text-right w-full sm:w-auto flex flex-col items-center sm:items-end">
                             <div class="mb-2">
                                 <div class="h-10 sm:h-12 w-24 sm:w-32 border-b-2 border-slate-300 border-dashed"></div>
                             </div>
-                            <p class="font-bold text-slate-800 text-base sm:text-lg">Tejal Kansara</p>
-                            <p class="text-slate-500 text-xs sm:text-sm">Dietician & Wellness Coach</p>
-                            <p class="text-slate-500 text-xs sm:text-sm">+91 9426601278</p>
+                            <p class="font-bold text-slate-800 text-base sm:text-lg">Mihir Kansara</p>
+                            <p class="text-slate-500 text-xs sm:text-sm">Wellness Coach</p>
+                            <p class="text-slate-500 text-xs sm:text-sm">+91 9898114972</p>
                         </div>
                     </div>
 
@@ -379,7 +475,221 @@
 
     </main>
 
+    <!-- Firebase SDK Setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration fallback architecture
+        let config;
+        try {
+            // Environment injected config (if available) ensures rules pass in specific isolated environments
+            config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                apiKey: "AIzaSyBXlsZLsN1MTpSwTM9tch6cxUiPdGDQxW0",
+                authDomain: "mihir-kansara.firebaseapp.com",
+                projectId: "mihir-kansara",
+                storageBucket: "mihir-kansara.firebasestorage.app",
+                messagingSenderId: "679564689618",
+                appId: "1:679564689618:web:0a46070895d966e71d2d0b",
+                measurementId: "G-4LG64HDT1R"
+            };
+        } catch (error) {
+            config = {
+                apiKey: "AIzaSyBXlsZLsN1MTpSwTM9tch6cxUiPdGDQxW0",
+                authDomain: "mihir-kansara.firebaseapp.com",
+                projectId: "mihir-kansara",
+                storageBucket: "mihir-kansara.firebasestorage.app",
+                messagingSenderId: "679564689618",
+                appId: "1:679564689618:web:0a46070895d966e71d2d0b",
+                measurementId: "G-4LG64HDT1R"
+            };
+        }
+
+        const app = initializeApp(config);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+        let unsubscribeSnapshot = null;
+
+        // Path standard logic
+        const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'maahi-crm';
+
+        // Make functions globally available for inline onclick handlers
+        window.handleAuth = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const errorDiv = document.getElementById('auth-error');
+            const errorMsg = document.getElementById('auth-error-msg');
+            const btn = document.getElementById('auth-submit-btn');
+            
+            errorDiv.classList.add('hidden');
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                let msg = "An error occurred.";
+                if(error.code === 'auth/invalid-credential') msg = "Invalid Email or Password.";
+                if(error.code === 'auth/user-not-found') msg = "User not found.";
+                if(error.code === 'auth/wrong-password') msg = "Incorrect password.";
+                
+                errorMsg.innerText = msg;
+                errorDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+        };
+
+        // Listen for Auth State Changes
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                // Logged IN
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('main-nav').classList.remove('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('firestore-error-banner').classList.add('hidden'); // hide default error
+                
+                // Fetch user specific data
+                const clientsRef = collection(db, 'artifacts', currentAppId, 'users', user.uid, 'clients');
+                
+                if (unsubscribeSnapshot) unsubscribeSnapshot(); // clean up previous listener
+                
+                unsubscribeSnapshot = onSnapshot(clientsRef, (snapshot) => {
+                    window.clients = [];
+                    snapshot.forEach(doc => {
+                        window.clients.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Sort by Date descending locally to avoid complex index queries
+                    window.clients.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    window.renderDashboard();
+                }, (error) => {
+                    console.error("Firestore Error:", error);
+                    // Catch Permission Denied elegantly
+                    if (error.code === 'permission-denied' || (error.message && error.message.includes('permission'))) {
+                        document.getElementById('firestore-error-banner').classList.remove('hidden');
+                    }
+                });
+                
+                window.navigate('dashboard');
+            } else {
+                // Logged OUT
+                document.getElementById('view-login').classList.remove('hidden');
+                document.getElementById('main-nav').classList.add('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                if(unsubscribeSnapshot) unsubscribeSnapshot();
+            }
+        });
+
+        // Function to Save Client to Firestore (Overrides old local version)
+        window.saveClientToFirebase = async (clientData) => {
+            if (!currentUser) return;
+            const btn = document.getElementById('save-btn');
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 mr-2 animate-spin"></i> Saving...';
+                lucide.createIcons();
+
+                const docRef = doc(db, 'artifacts', currentAppId, 'users', currentUser.uid, 'clients', clientData.id.toString());
+                await setDoc(docRef, clientData);
+                
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Save & Generate Report';
+                lucide.createIcons();
+                
+                window.viewReportData(clientData);
+            } catch (error) {
+                console.error("Error saving document: ", error);
+                
+                // Detailed UI error response if rules block writing
+                if (error.code === 'permission-denied' || (error.message && error.message.includes('permission'))) {
+                     document.getElementById('firestore-error-banner').classList.remove('hidden');
+                     btn.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Permission Denied';
+                     window.navigate('dashboard'); // Return to dashboard to see the banner
+                } else {
+                     btn.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-2"></i> Error Saving Data';
+                }
+                
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Save & Generate Report';
+                    lucide.createIcons();
+                }, 3000);
+            }
+        };
+
+    </script>
+
+    <!-- PWA Setup (Single File Magic) -->
     <script>
+        // Create an inline SVG icon for the Manifest
+        const svgIcon = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23fee2e2"/><text x="50%" y="55%" font-family="sans-serif" font-weight="bold" font-size="300" fill="%23dc2626" text-anchor="middle" dominant-baseline="middle">M</text></svg>`;
+        
+        // Dynamically inject Web App Manifest
+        const manifest = {
+            "name": "Maahi Wellness CRM",
+            "short_name": "Maahi",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#f8fafc",
+            "theme_color": "#dc2626",
+            "icons": [{ "src": svgIcon, "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
+
+        // Dynamically Inject Service Worker (For Installability and Offline Caching basis)
+        const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+            self.addEventListener('fetch', e => {}); // Pass-through for simple PWA compliance
+        `;
+        const swBlob = new Blob([swCode], {type: 'application/javascript'});
+        if ('serviceWorker' in navigator) {
+            try {
+                navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+                    .then(() => console.log('PWA Service Worker registered.'))
+                    .catch(err => console.warn('PWA offline features limited in this environment.'));
+            } catch (error) {
+                console.warn('PWA Service Worker skipped due to protocol restrictions.');
+            }
+        }
+
+        // Install Prompt Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').classList.remove('hidden');
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('install-btn').classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+    </script>
+
+    <!-- General Application Logic -->
+    <script>
+        window.clients = [];
+
         // --- Helper Functions ---
         const calculateBMI = (weight, heightCm) => {
             if (!weight || !heightCm) return 0;
@@ -390,7 +700,7 @@
         const getNormalWeight = (heightCm) => {
             if (!heightCm) return 0;
             const heightM = heightCm / 100;
-            return (22 * (heightM * heightM)).toFixed(1); // Using ideal BMI of 22
+            return (22 * (heightM * heightM)).toFixed(1); 
         };
 
         const getDaysSince = (dateString) => {
@@ -403,109 +713,46 @@
         // --- Bulletproof Loader for Highcharts ---
         function init3DChart(containerId, currentData, idealData) {
             const container = document.getElementById(containerId);
-            
             const render = () => {
                 if (typeof Highcharts === 'undefined' || typeof Highcharts.chart !== 'function') {
                     container.innerHTML = '<div class="flex h-full items-center justify-center text-red-500 font-medium text-sm text-center">Chart library failed to load. Please check your internet connection.</div>';
                     return;
                 }
-                
-                // Clear any loading text before rendering
                 container.innerHTML = '';
-                
                 Highcharts.chart(containerId, {
-                    chart: {
-                        type: 'column',
-                        options3d: {
-                            enabled: true,
-                            alpha: 15,
-                            beta: 15,
-                            depth: 50,
-                            viewDistance: 25
-                        },
-                        backgroundColor: 'transparent'
-                    },
+                    chart: { type: 'column', options3d: { enabled: true, alpha: 15, beta: 15, depth: 50, viewDistance: 25 }, backgroundColor: 'transparent' },
                     title: { text: null },
-                    xAxis: {
-                        categories: ['Weight (kg)', 'Body Fat (%)', 'Visceral Fat', 'Muscle (%)'],
-                        labels: { skew3d: true, style: { fontSize: '11px', fontWeight: 'bold' } }
-                    },
+                    xAxis: { categories: ['Weight (kg)', 'Body Fat (%)', 'Visceral Fat', 'Muscle (%)'], labels: { skew3d: true, style: { fontSize: '11px', fontWeight: 'bold' } } },
                     yAxis: { title: { text: 'Value' } },
-                    plotOptions: {
-                        column: { depth: 25, borderRadius: 2 }
-                    },
-                    series: [{
-                        name: 'Actual',
-                        data: currentData,
-                        color: '#0ea5e9' // sky-500
-                    }, {
-                        name: 'Target',
-                        data: idealData,
-                        color: '#10b981' // emerald-500
-                    }],
+                    plotOptions: { column: { depth: 25, borderRadius: 2 } },
+                    series: [{ name: 'Actual', data: currentData, color: '#ef4444' }, { name: 'Target', data: idealData, color: '#10b981' }],
                     credits: { enabled: false }
                 });
             };
 
-            // Delay rendering slightly to ensure the view-report div is fully visible in DOM
             if (typeof Highcharts !== 'undefined' && typeof Highcharts.chart === 'function') {
                 setTimeout(render, 150); 
             } else {
                 container.innerHTML = '<div class="flex h-full items-center justify-center text-slate-400 font-medium text-sm">Loading 3D Chart...</div>';
-                
-                const script1 = document.createElement('script');
-                script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.0/highcharts.js';
-                script1.onload = () => {
-                    const script2 = document.createElement('script');
-                    script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.0/highcharts-3d.js';
-                    script2.onload = () => setTimeout(render, 150);
-                    script2.onerror = () => { container.innerHTML = '<div class="flex h-full items-center justify-center text-red-500 font-medium text-sm">Error loading 3D Graph Module.</div>'; };
-                    document.head.appendChild(script2);
-                };
-                script1.onerror = () => { container.innerHTML = '<div class="flex h-full items-center justify-center text-red-500 font-medium text-sm">Error loading Highcharts.</div>'; };
-                document.head.appendChild(script1);
             }
         }
 
-        // --- State Management ---
-        let clients = [
-            {
-                id: 1,
-                reportNo: 1731,
-                date: new Date(new Date().setDate(new Date().getDate() - 35)).toISOString(),
-                name: 'Mr. Mayursinh Raol',
-                gender: 'Male',
-                address: 'Mahesana (Panchot)',
-                mobile: '7043964061',
-                age: 30,
-                height: 164.5,
-                weight: 81.8,
-                disease: 'Fat Loss',
-                bodyFat: 29.6,
-                visceralFat: 15,
-                muscle: 30.9,
-                bodyAge: 49,
-                metabolism: 1666,
-                bmi: 30.2,
-            }
-        ];
-
         // --- Navigation ---
-        function navigate(tab) {
+        window.navigate = function(tab) {
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-report').classList.add('hidden');
             
-            document.getElementById('nav-dashboard').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100";
-            document.getElementById('nav-form').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100";
+            document.getElementById('nav-dashboard').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 shrink-0";
+            document.getElementById('nav-form').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 shrink-0";
 
             if (tab === 'dashboard') {
                 document.getElementById('view-dashboard').classList.remove('hidden');
-                document.getElementById('nav-dashboard').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-emerald-50 text-emerald-700";
-                renderDashboard();
+                document.getElementById('nav-dashboard').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-red-50 text-red-700 shrink-0";
+                window.renderDashboard();
             } else if (tab === 'form') {
                 document.getElementById('view-form').classList.remove('hidden');
-                document.getElementById('nav-form').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-slate-800 text-white hover:bg-slate-700";
+                document.getElementById('nav-form').className = "flex items-center px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors bg-slate-800 text-white hover:bg-slate-700 shrink-0";
             } else if (tab === 'report') {
                 document.getElementById('view-report').classList.remove('hidden');
             }
@@ -513,16 +760,16 @@
         }
 
         // --- Dashboard Logic ---
-        function renderDashboard() {
+        window.renderDashboard = function() {
             const tbody = document.getElementById('client-list');
             tbody.innerHTML = '';
             
             let pendingCount = 0;
             
-            if (clients.length === 0) {
+            if (window.clients.length === 0) {
                 tbody.innerHTML = `<tr><td colSpan="6" class="p-8 text-center text-slate-500">No clients added yet. Click "New Entry" to start.</td></tr>`;
             } else {
-                clients.forEach(client => {
+                window.clients.forEach(client => {
                     const days = getDaysSince(client.date);
                     const isOverdue = days >= 30;
                     if (isOverdue) pendingCount++;
@@ -530,7 +777,7 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition-colors";
                     tr.innerHTML = `
-                        <td class="p-3 sm:p-4 font-bold text-emerald-600">#${client.reportNo || client.id}</td>
+                        <td class="p-3 sm:p-4 font-bold text-red-600">#${client.reportNo || client.id}</td>
                         <td class="p-3 sm:p-4">
                             <div class="font-medium text-slate-900">${client.name}</div>
                             <div class="text-xs sm:text-sm text-slate-500 flex items-center mt-1">
@@ -549,7 +796,7 @@
                             }
                         </td>
                         <td class="p-3 sm:p-4 text-right">
-                            <button onclick="viewReport(${client.id})" class="inline-flex items-center justify-center px-2 sm:px-3 py-1.5 border border-transparent text-xs sm:text-sm font-medium rounded-md text-emerald-700 bg-emerald-100 hover:bg-emerald-200 focus:outline-none transition-colors">
+                            <button onclick="viewReport(${client.id})" class="inline-flex items-center justify-center px-2 sm:px-3 py-1.5 border border-transparent text-xs sm:text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none transition-colors">
                                 View
                             </button>
                         </td>
@@ -558,21 +805,21 @@
                 });
             }
 
-            document.getElementById('stat-total').innerText = clients.length;
+            document.getElementById('stat-total').innerText = window.clients.length;
             document.getElementById('stat-pending').innerText = pendingCount;
-            document.getElementById('stat-active').innerText = clients.length;
+            document.getElementById('stat-active').innerText = window.clients.length;
             lucide.createIcons();
         }
 
         // --- Form Logic ---
-        function showForm(clientId = null) {
+        window.showForm = function(clientId = null) {
             document.getElementById('client-form').reset();
             document.getElementById('form-id').value = '';
             document.getElementById('form-disease').value = 'Fat Loss';
-            document.getElementById('form-title').innerHTML = '<i data-lucide="activity" class="w-5 h-5 mr-2 text-emerald-400"></i> New Health Scan Entry';
+            document.getElementById('form-title').innerHTML = '<i data-lucide="activity" class="w-5 h-5 mr-2 text-red-400"></i> New Health Scan Entry';
 
             if (clientId) {
-                const client = clients.find(c => c.id === clientId);
+                const client = window.clients.find(c => c.id === clientId);
                 if (client) {
                     document.getElementById('form-id').value = client.id;
                     document.getElementById('form-name').value = client.name;
@@ -589,30 +836,27 @@
                     document.getElementById('form-muscle').value = client.muscle;
                     document.getElementById('form-bodyAge').value = client.bodyAge;
                     document.getElementById('form-metabolism').value = client.metabolism;
-                    document.getElementById('form-title').innerHTML = '<i data-lucide="activity" class="w-5 h-5 mr-2 text-emerald-400"></i> Edit Health Profile';
+                    document.getElementById('form-title').innerHTML = '<i data-lucide="activity" class="w-5 h-5 mr-2 text-red-400"></i> Edit Health Profile';
                 }
             }
-            navigate('form');
+            window.navigate('form');
         }
 
-        function autoCalculateBMI() {
+        window.autoCalculateBMI = function() {
             const h = parseFloat(document.getElementById('form-height').value);
             const w = parseFloat(document.getElementById('form-weight').value);
-            if (h && w) {
-                document.getElementById('form-bmi').value = calculateBMI(w, h);
-            }
+            if (h && w) document.getElementById('form-bmi').value = calculateBMI(w, h);
         }
 
-        function saveClient(e) {
+        window.saveClient = function(e) {
             e.preventDefault();
             const idVal = document.getElementById('form-id').value;
-            
-            const maxReportNo = clients.length > 0 ? Math.max(...clients.map(c => c.reportNo || 0)) : 1730;
+            const maxReportNo = window.clients.length > 0 ? Math.max(...window.clients.map(c => c.reportNo || 0)) : 770;
 
             const clientData = {
                 id: idVal ? parseInt(idVal) : Date.now(),
-                reportNo: idVal ? clients.find(c => c.id == idVal).reportNo : maxReportNo + 1,
-                date: idVal ? clients.find(c => c.id == idVal).date : new Date().toISOString(),
+                reportNo: idVal ? window.clients.find(c => c.id == idVal).reportNo : maxReportNo + 1,
+                date: idVal ? window.clients.find(c => c.id == idVal).date : new Date().toISOString(),
                 name: document.getElementById('form-name').value,
                 mobile: document.getElementById('form-mobile').value,
                 address: document.getElementById('form-address').value,
@@ -629,30 +873,25 @@
                 metabolism: parseInt(document.getElementById('form-metabolism').value)
             };
 
-            if (idVal) {
-                const index = clients.findIndex(c => c.id == idVal);
-                if (index !== -1) clients[index] = clientData;
-            } else {
-                clients.unshift(clientData);
+            // Call the Firebase save function
+            if(window.saveClientToFirebase) {
+                window.saveClientToFirebase(clientData);
             }
-            
-            viewReport(clientData.id);
         }
 
         // --- Report Logic ---
-        function viewReport(clientId) {
-            const client = clients.find(c => c.id === clientId);
-            if (!client) return;
+        window.viewReport = function(clientId) {
+            const client = window.clients.find(c => c.id === clientId);
+            if (client) window.viewReportData(client);
+        };
 
+        window.viewReportData = function(client) {
             const normalWeight = getNormalWeight(client.height);
             const isMale = client.gender === 'Male';
             const daysSince = getDaysSince(client.date);
 
-            // Populate Header
             document.getElementById('r-id').innerText = client.reportNo || client.id.toString().slice(-4);
             document.getElementById('r-date').innerText = new Date(client.date).toLocaleDateString();
-            
-            // Populate Info
             document.getElementById('r-name').innerText = client.name;
             document.getElementById('r-gender-age').innerText = `${client.gender}, ${client.age} yrs`;
             document.getElementById('r-disease').innerText = client.disease;
@@ -660,97 +899,58 @@
             document.getElementById('r-mobile').innerText = client.mobile;
             document.getElementById('r-height').innerText = `${client.height} cm`;
 
-            // Populate Table
             document.getElementById('r-normal-weight').innerText = `${normalWeight} kg`;
             document.getElementById('r-real-age').innerText = `${client.age} yrs (Real Age)`;
             
             const eWeight = document.getElementById('r-weight');
             eWeight.innerText = `${client.weight} kg`;
-            eWeight.className = `p-2 sm:p-3 text-right font-bold bg-emerald-50/20 ${client.weight > normalWeight ? 'text-red-600' : 'text-emerald-600'}`;
+            eWeight.className = `p-2 sm:p-3 text-right font-bold bg-red-50/20 ${client.weight > normalWeight ? 'text-red-600' : 'text-emerald-600'}`;
 
             const eBodyFat = document.getElementById('r-bodyFat');
             eBodyFat.innerText = `${client.bodyFat} %`;
-            eBodyFat.className = `p-2 sm:p-3 text-right font-bold bg-emerald-50/20 ${client.bodyFat > (isMale ? 19 : 25) ? 'text-red-600' : 'text-slate-800'}`;
+            eBodyFat.className = `p-2 sm:p-3 text-right font-bold bg-red-50/20 ${client.bodyFat > (isMale ? 19 : 25) ? 'text-red-600' : 'text-slate-800'}`;
 
             const eVisceral = document.getElementById('r-visceralFat');
             eVisceral.innerText = client.visceralFat;
-            eVisceral.className = `p-2 sm:p-3 text-right font-bold bg-emerald-50/20 ${client.visceralFat > 5 ? 'text-red-600' : 'text-emerald-600'}`;
+            eVisceral.className = `p-2 sm:p-3 text-right font-bold bg-red-50/20 ${client.visceralFat > 5 ? 'text-red-600' : 'text-emerald-600'}`;
 
             document.getElementById('r-muscle').innerText = `${client.muscle} %`;
-
             const eBodyAge = document.getElementById('r-bodyAge');
             eBodyAge.innerText = `${client.bodyAge} yrs`;
-            eBodyAge.className = `p-2 sm:p-3 text-right font-bold bg-emerald-50/20 ${client.bodyAge > client.age ? 'text-red-600' : 'text-emerald-600'}`;
+            eBodyAge.className = `p-2 sm:p-3 text-right font-bold bg-red-50/20 ${client.bodyAge > client.age ? 'text-red-600' : 'text-emerald-600'}`;
 
             document.getElementById('r-metabolism').innerText = client.metabolism;
-
             const eBmi = document.getElementById('r-bmi');
             eBmi.innerText = client.bmi;
-            eBmi.className = `p-2 sm:p-3 text-right font-bold bg-emerald-50/20 ${client.bmi > 24.9 ? 'text-red-600' : 'text-slate-800'}`;
+            eBmi.className = `p-2 sm:p-3 text-right font-bold bg-red-50/20 ${client.bmi > 24.9 ? 'text-red-600' : 'text-slate-800'}`;
 
-            // --- Advanced Smart AI Analysis Logic ---
+            // Smart AI Analysis
             const analysis = [];
+            if (client.bmi > 24.9) analysis.push({ type: 'warning', title: 'Overweight (વજન વધારે છે)', text: `તમારું વજન આદર્શ વજન (${normalWeight} kg) કરતા વધારે છે. કેલરી કંટ્રોલ અને રોજ 45 મિનિટ કાર્ડિયો એક્સરસાઇઝ શરૂ કરો.` });
+            else if (client.bmi < 18.5) analysis.push({ type: 'warning', title: 'Underweight (વજન ઓછું છે)', text: 'તમારું વજન નોર્મલ કરતા ઓછું છે. હાઈ પ્રોટીન અને ન્યુટ્રિશન વાળો ખોરાક લો.' });
+            else analysis.push({ type: 'success', title: 'Normal Weight (આદર્શ વજન)', text: 'ખુબ સરસ! તમારું વજન કંટ્રોલમાં છે.' });
+
+            if (client.visceralFat > 9) analysis.push({ type: 'danger', title: 'High Visceral Fat (આંતરિક ચરબી)', text: 'તમારા આંતરિક અવયવો (Organs) પર ચરબીનું પ્રમાણ વધારે છે. તેલવાળું, જંક ફૂડ અને ખાંડ બિલકુલ બંધ કરો. આ ભવિષ્યમાં જોખમી બની શકે છે.' });
+            if (client.bodyAge > client.age) analysis.push({ type: 'warning', title: 'High Body Age (બોડી ઉંમર)', text: `તમારી અસલી ઉંમર ${client.age} છે પણ બોડી અંદરથી ${client.bodyAge} વર્ષની ઉંમર જેવું કામ કરે છે. લાઈફસ્ટાઈલ અને મેટાબોલિઝમ સુધારવાની તાત્કાલિક જરૂર છે.` });
             
-            // 1. Weight & BMI
-            if (client.bmi > 24.9) {
-                analysis.push({ type: 'warning', title: 'Overweight (વજન વધારે છે)', text: `તમારું વજન આદર્શ વજન (${normalWeight} kg) કરતા વધારે છે. કેલરી કંટ્રોલ અને રોજ 45 મિનિટ કાર્ડિયો એક્સરસાઇઝ શરૂ કરો.` });
-            } else if (client.bmi < 18.5) {
-                analysis.push({ type: 'warning', title: 'Underweight (વજન ઓછું છે)', text: 'તમારું વજન નોર્મલ કરતા ઓછું છે. હાઈ પ્રોટીન અને ન્યુટ્રિશન વાળો ખોરાક લો.' });
-            } else {
-                analysis.push({ type: 'success', title: 'Normal Weight (આદર્શ વજન)', text: 'ખુબ સરસ! તમારું વજન કંટ્રોલમાં છે.' });
-            }
-
-            // 2. Visceral Fat
-            if (client.visceralFat > 9) {
-                analysis.push({ type: 'danger', title: 'High Visceral Fat (આંતરિક ચરબી)', text: 'તમારા આંતરિક અવયવો (Organs) પર ચરબીનું પ્રમાણ વધારે છે. તેલવાળું, જંક ફૂડ અને ખાંડ બિલકુલ બંધ કરો. આ ભવિષ્યમાં જોખમી બની શકે છે.' });
-            }
-
-            // 3. Body Age
-            if (client.bodyAge > client.age) {
-                analysis.push({ type: 'warning', title: 'High Body Age (બોડી ઉંમર)', text: `તમારી અસલી ઉંમર ${client.age} છે પણ બોડી અંદરથી ${client.bodyAge} વર્ષની ઉંમર જેવું કામ કરે છે. લાઈફસ્ટાઈલ અને મેટાબોલિઝમ સુધારવાની તાત્કાલિક જરૂર છે.` });
-            }
-
-            // 4. Muscle Mass Analysis
             const minMuscle = isMale ? 33 : 24; 
-            if (client.muscle < minMuscle) {
-                analysis.push({ type: 'warning', title: 'Low Muscle Mass (સ્નાયુઓ નબળા છે)', text: `શરીરમાં સ્નાયુઓનું (Muscles) પ્રમાણ ઓછું છે. તમારા ડાયટમાં પ્રોટીન વધારો (પનીર, સોયા, ઈંડા, કઠોળ) અને સ્ટ્રેન્થ ટ્રેનિંગ શરૂ કરો.` });
-            } else {
-                analysis.push({ type: 'success', title: 'Good Muscle Mass (સ્નાયુઓ સારા છે)', text: `શરીરમાં સ્નાયુઓનું પ્રમાણ એકદમ સરસ છે. તેને જાળવી રાખવા એક્ટિવ રહો.` });
-            }
+            if (client.muscle < minMuscle) analysis.push({ type: 'warning', title: 'Low Muscle Mass (સ્નાયુઓ નબળા છે)', text: `શરીરમાં સ્નાયુઓનું (Muscles) પ્રમાણ ઓછું છે. તમારા ડાયટમાં પ્રોટીન વધારો (પનીર, સોયા, ઈંડા, કઠોળ) અને સ્ટ્રેન્થ ટ્રેનિંગ શરૂ કરો.` });
+            else analysis.push({ type: 'success', title: 'Good Muscle Mass (સ્નાયુઓ સારા છે)', text: `શરીરમાં સ્નાયુઓનું પ્રમાણ એકદમ સરસ છે. તેને જાળવી રાખવા એક્ટિવ રહો.` });
 
-            // 5. Metabolism Analysis
             const minMetabolism = isMale ? 1500 : 1200;
-            if (client.metabolism < minMetabolism) {
-                analysis.push({ type: 'danger', title: 'Slow Metabolism (ધીમું પાચન/કેલરી બર્ન)', text: `તમારું મેટાબોલિઝમ ધીમું છે, જેથી વજન ઉતારવામાં તકલીફ પડશે. ગ્રીન ટી, લીંબુ પાણી પીવો અને રોજ કસરત કરી તેને બૂસ્ટ કરો.` });
-            }
+            if (client.metabolism < minMetabolism) analysis.push({ type: 'danger', title: 'Slow Metabolism (ધીમું પાચન/કેલરી બર્ન)', text: `તમારું મેટાબોલિઝમ ધીમું છે, જેથી વજન ઉતારવામાં તકલીફ પડશે. ગ્રીન ટી, લીંબુ પાણી પીવો અને રોજ કસરત કરી તેને બૂસ્ટ કરો.` });
 
-            // 6. Daily Targets
             const waterLitres = (client.weight * 0.035).toFixed(1); 
             const proteinGrams = Math.round(client.weight * 1.2);   
             analysis.push({ type: 'info', title: 'Daily Target (તમારું આજનું લક્ષ્ય)', text: `રોજનું ઓછામાં ઓછું ${waterLitres} લીટર પાણી પીવો અને દિવસમાં લગભગ ${proteinGrams}g પ્રોટીન ખોરાકમાંથી લેવાનો આગ્રહ રાખો.` });
 
-
-            // Update UI with Analysis
             const rAnalysis = document.getElementById('r-analysis');
             rAnalysis.innerHTML = '';
             analysis.forEach(item => {
-                const bgClass = item.type === 'danger' ? 'bg-red-50 border border-red-100' : 
-                                item.type === 'warning' ? 'bg-amber-50 border border-amber-100' : 
-                                item.type === 'success' ? 'bg-emerald-50 border border-emerald-100' : 
-                                'bg-blue-50 border border-blue-100';
-                                
-                const iconColorClass = item.type === 'danger' ? 'text-red-500' : 
-                                       item.type === 'warning' ? 'text-amber-500' : 
-                                       item.type === 'success' ? 'text-emerald-500' : 
-                                       'text-blue-500';
-                                       
-                const titleColorClass = item.type === 'danger' ? 'text-red-800' : 
-                                        item.type === 'warning' ? 'text-amber-800' : 
-                                        item.type === 'success' ? 'text-emerald-800' : 
-                                        'text-blue-800';
-
-                const iconName = item.type === 'success' ? 'check-circle' :
-                                 item.type === 'info' ? 'target' : 'alert-triangle';
+                const bgClass = item.type === 'danger' ? 'bg-red-50 border border-red-100' : item.type === 'warning' ? 'bg-amber-50 border border-amber-100' : item.type === 'success' ? 'bg-emerald-50 border border-emerald-100' : 'bg-blue-50 border border-blue-100';
+                const iconColorClass = item.type === 'danger' ? 'text-red-500' : item.type === 'warning' ? 'text-amber-500' : item.type === 'success' ? 'text-emerald-500' : 'text-blue-500';
+                const titleColorClass = item.type === 'danger' ? 'text-red-800' : item.type === 'warning' ? 'text-amber-800' : item.type === 'success' ? 'text-emerald-800' : 'text-blue-800';
+                const iconName = item.type === 'success' ? 'check-circle' : item.type === 'info' ? 'target' : 'alert-triangle';
                 
                 rAnalysis.innerHTML += `
                     <div class="p-3 sm:p-4 rounded-lg flex items-start ${bgClass}">
@@ -759,36 +959,19 @@
                             <h4 class="font-bold text-xs sm:text-sm mb-1 ${titleColorClass}">${item.title}</h4>
                             <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${item.text}</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             lucide.createIcons();
 
-            // WhatsApp Message Generation
-            let waText = `*FIT4U Health Scan Report* 📋\n\n`;
-            waText += `નમસ્તે ${client.name},\n`;
-            waText += `તમારો આજનો હેલ્થ રિપોર્ટ તૈયાર છે:\n\n`;
-            waText += `*વજન:* ${client.weight} kg (આદર્શ: ${normalWeight} kg)\n`;
-            waText += `*BMI:* ${client.bmi}\n`;
-            waText += `*Visceral Fat:* ${client.visceralFat} (Normal: 1-5)\n`;
-            waText += `*Body Age:* ${client.bodyAge} વર્ષ (Real Age: ${client.age})\n\n`;
-            waText += `*💡 Expert Health Advice:*\n`;
-            
-            analysis.forEach(item => {
-                waText += `- *${item.title}:* ${item.text}\n`;
-            });
-            
-            waText += `\n*અમારું મિશન:* આદર્શ વજન, ફીટ અને તંદુરસ્ત મેડિસિન ફ્રી ભારત 🇮🇳\n\n`;
-            waText += `- Tejal Kansara (Dietician & Wellness Coach)\n`;
-            waText += `📍 FIT4U, Mahesana`;
+            let waText = `*Maahi Health Scan Report* 📋\n\nનમસ્તે ${client.name},\nતમારો આજનો હેલ્થ રિપોર્ટ તૈયાર છે:\n\n*વજન:* ${client.weight} kg (આદર્શ: ${normalWeight} kg)\n*BMI:* ${client.bmi}\n*Visceral Fat:* ${client.visceralFat} (Normal: 1-5)\n*Body Age:* ${client.bodyAge} વર્ષ (Real Age: ${client.age})\n\n*💡 Expert Health Advice:*\n`;
+            analysis.forEach(item => { waText += `- *${item.title}:* ${item.text}\n`; });
+            waText += `\n*અમારું મિશન:* આદર્શ વજન, ફીટ અને તંદુરસ્ત મેડિસિન ફ્રી ભારત 🇮🇳\n\n- Mihir Kansara (Wellness Coach)\n📍 Maahi Nutrition & Wellness Centre, Mehsana`;
 
             document.getElementById('btn-share').href = `https://wa.me/91${client.mobile}?text=${encodeURIComponent(waText)}`;
 
-            const draftFollowup = encodeURIComponent(
-                `નમસ્તે ${client.name},\n\nતમારા છેલ્લા હેલ્થ ચેકઅપને ${daysSince} દિવસ થઈ ગયા છે. શું તમે તમારા ${client.disease} ના લક્ષ્ય તરફ આગળ વધી રહ્યા છો? \n\nઆજે જ તમારી ફ્રી ફોલો-અપ વિઝિટ બુક કરો. FIT4U માં તમારું સ્વાગત છે! 💪`
-            );
-
+            const draftFollowup = encodeURIComponent(`નમસ્તે ${client.name},\n\nતમારા છેલ્લા હેલ્થ ચેકઅપને ${daysSince} દિવસ થઈ ગયા છે. શું તમે તમારા ${client.disease} ના લક્ષ્ય તરફ આગળ વધી રહ્યા છો? \n\nઆજે જ તમારી ફ્રી ફોલો-અપ વિઝિટ બુક કરો. Maahi Wellness માં તમારું સ્વાગત છે! 💪`);
             const btnFollowup = document.getElementById('btn-followup');
+            
             if (daysSince > 15) {
                 btnFollowup.href = `https://wa.me/91${client.mobile}?text=${draftFollowup}`;
                 btnFollowup.classList.remove('hidden');
@@ -798,31 +981,13 @@
                 btnFollowup.classList.remove('flex');
             }
 
-            // FIRST Navigate to make the container visible
-            navigate('report');
-
-            // THEN Safe 3D Graph Call
-            const chartDataCurrent = [
-                client.weight,
-                client.bodyFat,
-                client.visceralFat,
-                client.muscle
-            ];
-            
-            const chartDataIdeal = [
-                parseFloat(normalWeight),
-                isMale ? 17 : 22, 
-                3, 
-                isMale ? 35 : 28 
-            ];
-
-            init3DChart('chart-container', chartDataCurrent, chartDataIdeal);
+            window.navigate('report');
+            init3DChart('chart-container', [client.weight, client.bodyFat, client.visceralFat, client.muscle], [parseFloat(normalWeight), isMale ? 17 : 22, 3, isMale ? 35 : 28]);
         }
 
-        // Initialize icons and dashboard on load
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            renderDashboard();
+            // Initially do not render dashboard, wait for auth state
         });
     </script>
 </body>
